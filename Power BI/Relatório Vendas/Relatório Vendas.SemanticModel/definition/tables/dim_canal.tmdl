@@ -1,0 +1,32 @@
+table dim_canal
+	lineageTag: b4bf3006-c15d-461a-959d-f76b3c7f70da
+
+	column sk_canal
+		dataType: int64
+		formatString: 0
+		lineageTag: ab2cb1a1-4ed1-4a6e-ae43-74a9aaa1e5b8
+		summarizeBy: none
+		sourceColumn: sk_canal
+
+		annotation SummarizationSetBy = Automatic
+
+	column canal
+		dataType: string
+		lineageTag: d4898c76-a123-4a87-b4b4-2c597c2373c2
+		summarizeBy: none
+		sourceColumn: canal
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_canal = m
+		mode: import
+		source =
+				let
+				    Fonte = Parquet.Document(File.Contents("C:\Users\matheus.pereira\Documents\Unipar\workshop-unipar-2026-11-04\dados\gold\dim_canal.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

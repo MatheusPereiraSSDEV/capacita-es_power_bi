@@ -1,0 +1,113 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 618.39958526054465,
+            "y": 8.5964803638837566
+          },
+          "nodeIndex": "dim_calendario",
+          "nodeLineageTag": "6547f1b0-8725-4958-823b-ea7b8b6e9aa1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 618.40572390860234,
+            "y": 426.12841010469293
+          },
+          "nodeIndex": "dim_canal",
+          "nodeLineageTag": "b4bf3006-c15d-461a-959d-f76b3c7f70da",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 50.011736813668335,
+            "y": 417.5045590809134
+          },
+          "nodeIndex": "dim_cliente",
+          "nodeLineageTag": "ea5d0ef7-d314-47e0-a053-d514d5bf08c5",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": -50
+          },
+          "nodeIndex": "dim_produto",
+          "nodeLineageTag": "ff40596b-2e45-4f36-950e-d5d3c3135726",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 902.57459463684847,
+            "y": 227.54180984318009
+          },
+          "nodeIndex": "fato_metas",
+          "nodeLineageTag": "262bd4a8-2319-4eac-8e9a-6651aab994e5",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 334.19168359106368,
+            "y": 154.50367622361637
+          },
+          "nodeIndex": "fato_vendas",
+          "nodeLineageTag": "ecce8098-9e83-4f29-9781-22c33ae2b564",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 1136.5745946368484,
+            "y": 0
+          },
+          "nodeIndex": "Medidas",
+          "nodeLineageTag": "3a56b93c-2c00-43e8-9b31-79dbeda16ba3",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 71.857354256907087,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}

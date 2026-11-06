@@ -1,0 +1,102 @@
+table dim_calendario
+	lineageTag: 6547f1b0-8725-4958-823b-ea7b8b6e9aa1
+
+	column sk_data
+		dataType: int64
+		formatString: 0
+		lineageTag: b7911325-ff9b-4ab7-b4c4-98438f02e854
+		summarizeBy: none
+		sourceColumn: sk_data
+
+		annotation SummarizationSetBy = Automatic
+
+	column data
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4bad526d-3885-4dbc-ad0f-239ce8bc96e1
+		summarizeBy: none
+		sourceColumn: data
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ano
+		dataType: int64
+		formatString: 0
+		lineageTag: af27272e-b5ac-4744-8cba-695220e4a937
+		summarizeBy: sum
+		sourceColumn: ano
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes
+		dataType: int64
+		formatString: 0
+		lineageTag: e04729ea-957b-49be-b5af-cd227c00483a
+		summarizeBy: sum
+		sourceColumn: mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes_nome
+		dataType: string
+		lineageTag: 62ce67d5-b386-4168-ae5a-f931170d622c
+		summarizeBy: none
+		sourceColumn: mes_nome
+
+		annotation SummarizationSetBy = Automatic
+
+	column ano_mes
+		dataType: string
+		lineageTag: a5714b56-f808-46a9-8bdc-21a314939835
+		summarizeBy: none
+		sourceColumn: ano_mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column trimestre
+		dataType: string
+		lineageTag: 35cc452d-c2cf-4dde-b01d-d75d3fbfbb4d
+		summarizeBy: none
+		sourceColumn: trimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column dia_semana_num
+		dataType: int64
+		formatString: 0
+		lineageTag: df7fa3cd-a46b-4d12-a434-11da5bee3371
+		summarizeBy: sum
+		sourceColumn: dia_semana_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column dia_semana
+		dataType: string
+		lineageTag: a1018150-c642-4b66-a1ab-8249350e6ef7
+		summarizeBy: none
+		sourceColumn: dia_semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_dia
+		dataType: string
+		lineageTag: 2838840e-0124-4dd0-a99b-2caf4e699040
+		summarizeBy: none
+		sourceColumn: tipo_dia
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_calendario = m
+		mode: import
+		source =
+				let
+				    Fonte = Parquet.Document(File.Contents("C:\Users\matheus.pereira\Documents\Unipar\workshop-unipar-2026-11-04\dados\gold\dim_calendario.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

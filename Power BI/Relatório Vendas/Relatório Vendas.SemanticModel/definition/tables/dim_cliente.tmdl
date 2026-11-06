@@ -1,0 +1,75 @@
+table dim_cliente
+	lineageTag: ea5d0ef7-d314-47e0-a053-d514d5bf08c5
+
+	column sk_cliente
+		dataType: int64
+		formatString: 0
+		lineageTag: 3a0749f8-5b29-4b33-a410-f1601467949c
+		summarizeBy: none
+		sourceColumn: sk_cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column id_cliente
+		dataType: string
+		lineageTag: 4b683861-21a0-4d94-bdef-f783f53e662b
+		summarizeBy: none
+		sourceColumn: id_cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column nome
+		dataType: string
+		lineageTag: cd108c87-4d06-49c4-8f00-725c0d4436e8
+		summarizeBy: none
+		sourceColumn: nome
+
+		annotation SummarizationSetBy = Automatic
+
+	column cidade
+		dataType: string
+		lineageTag: ec9a79fe-4253-46e6-882b-e1a98e310b98
+		summarizeBy: none
+		sourceColumn: cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column uf
+		dataType: string
+		lineageTag: 29b2d26a-0303-4498-8e59-a507802fdb28
+		summarizeBy: none
+		sourceColumn: uf
+
+		annotation SummarizationSetBy = Automatic
+
+	column segmento
+		dataType: string
+		lineageTag: 53562b1d-729b-4c9a-9b92-7e16aac7f3b3
+		summarizeBy: none
+		sourceColumn: segmento
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_cadastro
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6ecaac89-1bce-4d49-a7f7-657b94c0b59c
+		summarizeBy: none
+		sourceColumn: data_cadastro
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition dim_cliente = m
+		mode: import
+		source =
+				let
+				    Fonte = Parquet.Document(File.Contents("C:\Users\matheus.pereira\Documents\Unipar\workshop-unipar-2026-11-04\dados\gold\dim_cliente.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
