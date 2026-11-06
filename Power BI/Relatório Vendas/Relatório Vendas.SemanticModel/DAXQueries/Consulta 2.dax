@@ -1,0 +1,12 @@
+DEFINE
+	VAR __DS0Core = 
+		SUMMARIZECOLUMNS('dim_produto'[categoria], "Total_Venda_Liquida", 'Medidas'[Total Venda Liquida])
+
+	VAR __DS0PrimaryWindowed = 
+		TOPN(1001, __DS0Core, [Total_Venda_Liquida], 0, 'dim_produto'[categoria], 1)
+
+EVALUATE
+	__DS0PrimaryWindowed
+
+ORDER BY
+	[Total_Venda_Liquida] DESC, 'dim_produto'[categoria]

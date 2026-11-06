@@ -1,0 +1,7 @@
+expression Caminho = "C:\Users\matheus.pereira\Documents\Treinamentos\capacita-es_power_bi\Dados\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 4067dc9f-6b00-483d-b1d4-486497144d67
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Text
+

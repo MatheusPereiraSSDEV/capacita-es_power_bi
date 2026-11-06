@@ -9,9 +9,9 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["dim_calendario","dim_canal","dim_cliente","dim_produto","fato_metas","fato_vendas","Medidas"]
+annotation PBI_QueryOrder = ["Caminho","dim_calendario","dim_canal","dim_cliente","dim_produto","fato_metas","fato_vendas","Medidas"]
 
-annotation PBI_ProTooling = ["DevMode"]
+annotation PBI_ProTooling = ["DevMode","DaxQueryView_Desktop","TMDLView_Desktop"]
 
 ref table dim_calendario
 ref table dim_canal
@@ -20,6 +20,10 @@ ref table dim_produto
 ref table fato_metas
 ref table fato_vendas
 ref table Medidas
+ref table Parâmetro_Campo
+ref table Parâmetro_Medidas
+ref table Parâmetro_Numérico
+ref table dCalendario
 
 ref cultureInfo pt-BR
 

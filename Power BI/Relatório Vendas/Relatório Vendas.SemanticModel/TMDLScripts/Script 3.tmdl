@@ -1,0 +1,183 @@
+createOrReplace
+
+	table fato_vendas
+		lineageTag: ecce8098-9e83-4f29-9781-22c33ae2b564
+
+		measure Medida = SUM(fato_vendas[quantidade]) * SUM(fato_vendas[valor_unitario])
+			lineageTag: f760f8ba-abbf-440c-8e3d-9acbf3c9b0c1
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Total Venda' =
+				
+				SUMX(
+				    fato_vendas,
+				    fato_vendas[quantidade] * fato_vendas[valor_unitario]
+				)
+			lineageTag: 3f622d89-269b-47da-bc79-ee774d94db4d
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Total Venda App' =
+				
+				CALCULATE(
+				    [Total Venda],
+				    // FILTER(
+				    //     fato_vendas,
+				    //     fato_vendas[sk_canal] = 1
+				    // )
+				    FILTER(
+				        dim_canal,
+				        dim_canal[sk_canal] = 1
+				    )--,
+				    // KEEPFILTERS(fato_vendas[sk_canal] = 1)
+				)
+			lineageTag: e1d8293c-2807-4cab-9427-a7ff9ae6c931
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Total Venda App 2' =
+				
+				CALCULATE(
+				    [Total Venda],
+				    dim_canal[sk_canal] = 1
+				)
+			lineageTag: 0555e725-f9cd-4b42-9c06-0d8093ac087f
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column id_venda
+			dataType: string
+			lineageTag: efc140f6-e579-4a0c-9530-891ad924ad51
+			summarizeBy: none
+			sourceColumn: id_venda
+
+			annotation SummarizationSetBy = Automatic
+
+		column sk_data
+			dataType: int64
+			formatString: 0
+			lineageTag: bc78bf03-210d-491b-a57b-0791ad67ff7f
+			summarizeBy: sum
+			sourceColumn: sk_data
+
+			annotation SummarizationSetBy = Automatic
+
+		column sk_cliente
+			dataType: int64
+			formatString: 0
+			lineageTag: dbd76338-7e86-4b77-ac3f-aa8be9a86a26
+			summarizeBy: none
+			sourceColumn: sk_cliente
+
+			annotation SummarizationSetBy = Automatic
+
+		column sk_produto
+			dataType: int64
+			formatString: 0
+			lineageTag: ff0d3de2-e1a3-4490-8225-387634bab365
+			summarizeBy: none
+			sourceColumn: sk_produto
+
+			annotation SummarizationSetBy = Automatic
+
+		column sk_canal
+			dataType: int64
+			formatString: 0
+			lineageTag: 01e42cda-69e3-4924-84b8-868234129950
+			summarizeBy: none
+			sourceColumn: sk_canal
+
+			annotation SummarizationSetBy = Automatic
+
+		column quantidade
+			dataType: int64
+			formatString: 0
+			lineageTag: 60ec374b-c829-41a7-9277-80542faab4a5
+			summarizeBy: sum
+			sourceColumn: quantidade
+
+			annotation SummarizationSetBy = Automatic
+
+		column valor_unitario
+			dataType: double
+			lineageTag: 821c918d-3c85-45a5-8513-549fcadf8605
+			summarizeBy: sum
+			sourceColumn: valor_unitario
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column valor_bruto
+			dataType: double
+			lineageTag: 12266ec9-e54b-441b-b901-f0f277f1810b
+			summarizeBy: sum
+			sourceColumn: valor_bruto
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column valor_desconto
+			dataType: double
+			lineageTag: 2a355415-81e5-46cb-9a7a-2569e0f3879d
+			summarizeBy: sum
+			sourceColumn: valor_desconto
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column valor_liquido
+			dataType: double
+			lineageTag: 0b207783-7836-41cf-a31f-cf985b5d899e
+			summarizeBy: sum
+			sourceColumn: valor_liquido
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column custo_total
+			dataType: double
+			lineageTag: 28441ab3-c7fd-497a-99b6-480ddf2d9162
+			summarizeBy: sum
+			sourceColumn: custo_total
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column 'Valor Total' = fato_vendas[quantidade] * fato_vendas[valor_unitario]
+			lineageTag: aa828b1f-fce1-42b5-97c2-4d6c2719bd34
+			summarizeBy: sum
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column Data
+			dataType: dateTime
+			formatString: Long Date
+			lineageTag: 1a849fa9-a22a-484e-8860-7f8adfbd59d8
+			summarizeBy: none
+			sourceColumn: Data
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation UnderlyingDateTimeDataType = Date
+
+		partition fato_vendas = m
+			mode: import
+			source =
+					let
+					    Fonte = Parquet.Document(File.Contents(Caminho & "fato_vendas.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null]),
+					    #"Data Inserida" = Table.AddColumn(Fonte, "Data", each Date.From(Text.From([sk_data], "pt-BR")), type date)
+					in
+					    #"Data Inserida"
+
+		annotation PBI_NavigationStepName = Navegação
+
+		annotation PBI_ResultType = Table
+

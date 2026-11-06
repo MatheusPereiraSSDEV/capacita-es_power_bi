@@ -22,7 +22,7 @@ table dim_canal
 		mode: import
 		source =
 				let
-				    Fonte = Parquet.Document(File.Contents("C:\Users\matheus.pereira\Documents\Unipar\workshop-unipar-2026-11-04\dados\gold\dim_canal.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				    Fonte = Parquet.Document(File.Contents(Caminho & "dim_canal.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
 				in
 				    Fonte
 

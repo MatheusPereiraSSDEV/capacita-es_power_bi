@@ -92,7 +92,7 @@ table dim_calendario
 		mode: import
 		source =
 				let
-				    Fonte = Parquet.Document(File.Contents("C:\Users\matheus.pereira\Documents\Unipar\workshop-unipar-2026-11-04\dados\gold\dim_calendario.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				    Fonte = Parquet.Document(File.Contents(Caminho & "dim_calendario.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
 				in
 				    Fonte
 

@@ -1,0 +1,106 @@
+createOrReplace
+
+	table Medidas
+		lineageTag: 3a56b93c-2c00-43e8-9b31-79dbeda16ba3
+
+		measure 'Total Venda Liquida' = SUM(fato_vendas[valor_liquido])
+			formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+			lineageTag: 8de972c9-ac31-402f-a9ad-4add284bd22a
+
+			annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+		measure 'Quantidade Vendas' = COUNTROWS(fato_vendas)
+			formatString: 0
+			lineageTag: 00ea9719-774e-4011-af65-9ebc07b1ba42
+
+		measure 'Ticket Médio' = DIVIDE([Total Venda Liquida], [Quantidade Vendas], 0)
+			lineageTag: 66970e3a-d7f5-44ae-8d2d-1a7334fee3aa
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Quantidade Itens' = SUM(fato_vendas[quantidade])
+			formatString: 0
+			lineageTag: a592a3a1-5ed3-47a6-9787-d85ef3fc9f0c
+
+		measure 'Total Venda Mês Anterior' =
+				
+				VAR dataRef = MIN(dim_calendario[data])
+				
+				RETURN
+				CALCULATE(
+				    [Total Venda Liquida],
+				    PREVIOUSMONTH(dim_calendario[data])
+				)
+			lineageTag: 87dc240c-f8be-40af-b4a4-e56e86416c74
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Total Venda AA' =
+				
+				CALCULATE(
+				    [Total Venda Liquida],
+				    PREVIOUSYEAR(dim_calendario[data])
+				)
+			lineageTag: 58aaa8e3-fd47-41e8-8ac5-f52177ce8a68
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Total Total Venda AA Acum' =
+				
+				CALCULATE(
+				    [Total Venda Liquida],
+				    SAMEPERIODLASTYEAR(dim_calendario[data])
+				)
+			lineageTag: dcfd4ba6-a99c-4168-82e7-5172cd9df3a3
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure Transitória = ISINSCOPE(dim_calendario[ano])
+			formatString: """TRUE"";""TRUE"";""FALSE"""
+			lineageTag: 1d75c2a8-3492-450a-ae2f-0412611dbea6
+
+		measure 'Formatado Total Geral' =
+				
+				IF(
+				    ISINSCOPE(dim_calendario[ano_mes]),
+				    [Total Venda Mês Anterior],
+				    [Total Venda AA]
+				)
+			lineageTag: bcb5bb82-fe79-4bdd-b005-53d36aaa9ca6
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Desc. Quantidade Itens' = "Quantidade Itens" & IF(SELECTEDVALUE('Parâmetro_Medidas'[Parâmetro_Medidas Pedido]) = 0, " 🟢")
+			lineageTag: 1c1264c4-43c9-4778-a810-fc5c85f4ddbc
+
+		measure 'Fundo. Quantidade Itens' = IF(SELECTEDVALUE('Parâmetro_Medidas'[Parâmetro_Medidas Pedido]) = 0, "#118DFF")
+			lineageTag: 7c6edec0-92ce-454b-998a-2bbd3c0d082a
+
+		measure 'Proj. Valor Venda' = [Total Venda Liquida] * DIVIDE('Parâmetro_Numérico'[Valor Parâmetro_Numérico], 100, 0)
+			formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+			lineageTag: ca8c2c4c-0fc8-417f-a8e4-3e9f705727ac
+
+			annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+		column 'Coluna 1'
+			dataType: string
+			isHidden
+			lineageTag: a4b053d5-26fb-4fac-b8ff-60bd2ba03fae
+			summarizeBy: none
+			sourceColumn: Coluna 1
+
+			changedProperty = IsHidden
+
+			annotation SummarizationSetBy = Automatic
+
+		partition Medidas = m
+			mode: import
+			source =
+					let
+					    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+					    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}})
+					in
+					    #"Tipo Alterado"
+
+		annotation PBI_ResultType = Table
+

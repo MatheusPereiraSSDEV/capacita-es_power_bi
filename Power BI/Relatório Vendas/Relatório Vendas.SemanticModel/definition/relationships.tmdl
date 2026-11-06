@@ -2,10 +2,6 @@ relationship cbfae631-7456-47c8-6e6d-d818efce38fb
 	fromColumn: fato_metas.sk_data
 	toColumn: dim_calendario.sk_data
 
-relationship 36e5cbe8-b930-0c93-d2bd-05d8ace3263e
-	fromColumn: fato_vendas.sk_data
-	toColumn: dim_calendario.sk_data
-
 relationship 0f50a179-bab3-12f9-c0bb-27bc055cdca1
 	fromColumn: fato_metas.sk_canal
 	toColumn: dim_canal.sk_canal
@@ -21,4 +17,8 @@ relationship 0eb20532-bbe6-1cc7-e746-d169a2a37041
 relationship 48971258-a0c7-9bc1-58d2-fcc32ff143ba
 	fromColumn: fato_vendas.sk_produto
 	toColumn: dim_produto.sk_produto
+
+relationship f7c9176b-b83b-3c4e-ca4c-251e5a028069
+	fromColumn: fato_vendas.Data
+	toColumn: dim_calendario.data
 

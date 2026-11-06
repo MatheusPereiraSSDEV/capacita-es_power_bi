@@ -1,0 +1,28 @@
+table Parâmetro_Numérico
+	lineageTag: e8d53f39-3f17-4fbb-b9b9-013646e927e9
+
+	measure 'Valor Parâmetro_Numérico' = SELECTEDVALUE('Parâmetro_Numérico'[Parâmetro_Numérico], 0)
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 7a5e3369-7ac3-436b-a038-a850c16797c4
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column Parâmetro_Numérico
+		formatString: #,0.0
+		lineageTag: 7e72f9b4-0ab5-4c62-beea-e85503331d47
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+	partition Parâmetro_Numérico = calculated
+		mode: import
+		source = GENERATESERIES(CURRENCY(0.0), CURRENCY(100), CURRENCY(0.1))
+
+	annotation PBI_Id = 35af554ba22f4de09860654a5d0f3924
+

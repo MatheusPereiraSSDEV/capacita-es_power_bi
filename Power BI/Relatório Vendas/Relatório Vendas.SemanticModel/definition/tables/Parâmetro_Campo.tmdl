@@ -1,0 +1,58 @@
+table Parâmetro_Campo
+	lineageTag: e751f4ce-5c3d-4759-85e2-90a7493c8d62
+
+	column Parâmetro_Campo
+		lineageTag: 0adc854f-4fa1-4ff4-a63e-91b45fbbeb55
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parâmetro_Campo Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'Parâmetro_Campo Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro_Campo Campos'
+		isHidden
+		lineageTag: 036495d4-65f0-437d-98e0-064b1cb4d642
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parâmetro_Campo Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro_Campo Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: 9a23e206-0da0-487d-a5e8-bc857159166e
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Parâmetro_Campo = calculated
+		mode: import
+		source =
+				{
+				    ("ano", NAMEOF('dim_calendario'[ano]), 0),
+				    ("mes_nome", NAMEOF('dim_calendario'[mes_nome]), 1),
+				    ("ano_mes", NAMEOF('dim_calendario'[ano_mes]), 2),
+				    ("data", NAMEOF('dim_calendario'[data]), 3),
+				    ("canal", NAMEOF('dim_canal'[canal]), 4),
+				    ("cidade", NAMEOF('dim_cliente'[cidade]), 5),
+				    ("id_cliente", NAMEOF('dim_cliente'[id_cliente]), 6),
+				    ("nome", NAMEOF('dim_cliente'[nome]), 7),
+				    ("segmento", NAMEOF('dim_cliente'[segmento]), 8),
+				    ("uf", NAMEOF('dim_cliente'[uf]), 9),
+				    ("categoria", NAMEOF('dim_produto'[categoria]), 10),
+				    ("descricao", NAMEOF('dim_produto'[descricao]), 11)
+				}
+
+	annotation PBI_Id = fc3fa4c687f14952a00f412fb48e16ab
+

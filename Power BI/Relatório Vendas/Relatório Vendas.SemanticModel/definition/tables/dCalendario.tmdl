@@ -1,0 +1,27 @@
+table dCalendario
+	lineageTag: 58656278-0e7b-4b2c-8e89-2ed1ee6eee31
+
+	column Date
+		formatString: General Date
+		lineageTag: 6991da0a-bc65-4706-920d-6cc173bfa3f1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ano = dCalendario[Date].[Ano]
+		formatString: 0
+		lineageTag: 24bd3259-3f58-48ab-8e17-a0165953ec0b
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCalendario = calculated
+		mode: import
+		source =
+				
+				CALENDAR(MIN(dim_calendario[data]), MAX(dim_calendario[data]))
+
+	annotation PBI_Id = 030d22207bfd462aa54a0fe64540c351
+

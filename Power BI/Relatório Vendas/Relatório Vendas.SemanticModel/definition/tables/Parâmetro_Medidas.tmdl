@@ -1,0 +1,53 @@
+table Parâmetro_Medidas
+	lineageTag: de6f5422-f2e5-434d-9c01-e44ff2630be5
+
+	column Parâmetro_Medidas
+		lineageTag: 3ac4c5be-c03e-4f9a-bfcc-a7be717bbba4
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parâmetro_Medidas Pedido'
+
+		relatedColumnDetails
+			groupByColumn: 'Parâmetro_Medidas Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro_Medidas Campos'
+		isHidden
+		lineageTag: a67a31a4-2574-439b-82ae-571d45a7aef4
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parâmetro_Medidas Pedido'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parâmetro_Medidas Pedido'
+		isHidden
+		formatString: 0
+		lineageTag: f3b4a3c9-f9e5-48d4-9464-239a5ce10e2b
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Parâmetro_Medidas = calculated
+		mode: import
+		source =
+				{
+				    ("Quantidade Itens", NAMEOF('Medidas'[Quantidade Itens]), 0),
+				    ("Quantidade Vendas", NAMEOF('Medidas'[Quantidade Vendas]), 1),
+				    ("Ticket Médio", NAMEOF('Medidas'[Ticket Médio]), 2),
+				    ("Total Total Venda AA Acum", NAMEOF('Medidas'[Total Total Venda AA Acum]), 3),
+				    ("Total Venda AA", NAMEOF('Medidas'[Total Venda AA]), 4),
+				    ("Total Venda Liquida", NAMEOF('Medidas'[Total Venda Liquida]), 5),
+				    ("Total Venda Mês Anterior", NAMEOF('Medidas'[Total Venda Mês Anterior]), 6)
+				}
+
+	annotation PBI_Id = d1c6662197124cc381fb781e255269ce
+

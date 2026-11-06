@@ -33,7 +33,7 @@ table fato_metas
 		mode: import
 		source =
 				let
-				    Fonte = Parquet.Document(File.Contents("C:\Users\matheus.pereira\Documents\Unipar\workshop-unipar-2026-11-04\dados\gold\fato_metas.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				    Fonte = Parquet.Document(File.Contents(Caminho & "fato_metas.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
 				in
 				    Fonte
 
