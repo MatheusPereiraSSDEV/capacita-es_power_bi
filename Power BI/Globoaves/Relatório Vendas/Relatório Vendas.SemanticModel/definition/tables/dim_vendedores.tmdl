@@ -1,0 +1,30 @@
+table dim_vendedores
+	lineageTag: 3dc3f7c7-1e46-4b38-b2ac-2aa466adfd44
+
+	column Cidade
+		dataType: string
+		lineageTag: 786302e7-fb45-403f-b5b1-e8ad432de0d5
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendedor
+		dataType: string
+		lineageTag: 3bd24732-c48c-43c1-8344-e000e905a00b
+		summarizeBy: none
+		sourceColumn: Vendedor
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_vendedores = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("bcvBCYAwDADAXfIumUFwBX+lj9hELKREklbX1wG8/+UMm6mwQYJO45QZeIlLc1rCjvGQS0zFah13h5IyrBSVbtFvCE9yNiTt0vh/lBc=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Cidade = _t, Vendedor = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Cidade", type text}, {"Vendedor", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "70d578004a4420076126",
+  "position": {
+    "x": 0,
+    "y": 91.966386554621849,
+    "z": 3000,
+    "height": 137.243920412675,
+    "width": 540.48636698599853,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Parâmetro_Numérico"
+                    }
+                  },
+                  "Property": "Parâmetro_Numérico"
+                }
+              },
+              "queryRef": "Parâmetro_Numérico.Parâmetro_Numérico",
+              "nativeQueryRef": "Parâmetro_Numérico",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "data": [
+        {
+          "properties": {}
+        }
+      ],
+      "general": [
+        {
+          "properties": {}
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

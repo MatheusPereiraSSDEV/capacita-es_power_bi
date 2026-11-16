@@ -1,0 +1,7 @@
+role Vendedor
+	modelPermission: read
+
+	tablePermission dim_vendedores = [Vendedor] = USERPRINCIPALNAME()
+
+	annotation PBI_Id = 3e2a6693462a45449caa8b228533ef10
+

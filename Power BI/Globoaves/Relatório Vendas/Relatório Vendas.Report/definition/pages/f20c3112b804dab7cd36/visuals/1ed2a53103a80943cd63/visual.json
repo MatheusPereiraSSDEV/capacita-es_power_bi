@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "1ed2a53103a80943cd63",
+  "position": {
+    "x": 1223.3142857142857,
+    "y": 91.428571428571431,
+    "z": 4000,
+    "height": 150.05042016806723,
+    "width": 505.00840336134456,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "autoSelectVisualType": true,
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Proj. Valor Venda"
+                }
+              },
+              "queryRef": "Medidas.Proj. Valor Venda",
+              "nativeQueryRef": "Proj. Valor Venda"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

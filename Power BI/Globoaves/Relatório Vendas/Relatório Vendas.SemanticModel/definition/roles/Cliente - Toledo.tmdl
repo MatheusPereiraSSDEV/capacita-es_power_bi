@@ -1,0 +1,7 @@
+role 'Cliente - Toledo'
+	modelPermission: read
+
+	tablePermission dim_cliente = [cidade] == "Toledo"
+
+	annotation PBI_Id = ddd816af78cc4a948ecf670def93e662
+
