@@ -1,0 +1,155 @@
+createOrReplace
+
+	table fato_vendas
+		lineageTag: 99bc7527-84a9-498a-84a5-f5881dc72198
+
+		/// Chave primária da tabela de Vendas
+		column id_venda
+			dataType: string
+			lineageTag: 1677da93-8219-45a1-a0a2-45841bca7023
+			summarizeBy: none
+			sourceColumn: id_venda
+
+			annotation SummarizationSetBy = Automatic
+
+		column sk_data
+			dataType: int64
+			formatString: 0
+			lineageTag: ea5b34d7-f30c-4e82-93b1-711faca21259
+			summarizeBy: sum
+			sourceColumn: sk_data
+
+			annotation SummarizationSetBy = Automatic
+
+		column sk_cliente
+			dataType: int64
+			formatString: 0
+			lineageTag: da77dde3-c22d-4eb4-82dd-8853be1ef087
+			summarizeBy: none
+			sourceColumn: sk_cliente
+
+			annotation SummarizationSetBy = Automatic
+
+		column sk_produto
+			dataType: int64
+			formatString: 0
+			lineageTag: 1350afe5-87c6-473e-9b7b-d8320189a2fc
+			summarizeBy: none
+			sourceColumn: sk_produto
+
+			annotation SummarizationSetBy = Automatic
+
+		column sk_canal
+			dataType: int64
+			formatString: 0
+			lineageTag: d6b702d4-65d8-47d3-97e0-46f1a0f6fb44
+			summarizeBy: none
+			sourceColumn: sk_canal
+
+			annotation SummarizationSetBy = Automatic
+
+		column quantidade
+			dataType: int64
+			formatString: 0
+			lineageTag: 9b0858ca-df62-4b66-92a6-de34b71019ad
+			summarizeBy: sum
+			sourceColumn: quantidade
+
+			annotation SummarizationSetBy = Automatic
+
+		column valor_unitario
+			dataType: double
+			lineageTag: 80f0f586-41fd-4549-bca0-95a13d0971fc
+			summarizeBy: sum
+			sourceColumn: valor_unitario
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column valor_bruto
+			dataType: double
+			lineageTag: 8c9d0383-afa7-4035-a7d6-1c60932a746b
+			summarizeBy: sum
+			sourceColumn: valor_bruto
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column valor_desconto
+			dataType: double
+			lineageTag: 8339ae0f-6363-4772-aa86-06a1b22c934b
+			summarizeBy: sum
+			sourceColumn: valor_desconto
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column valor_liquido
+			dataType: double
+			formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+			lineageTag: 14180938-8ac9-4e14-b790-dc87b0443119
+			summarizeBy: sum
+			sourceColumn: valor_liquido
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+		column custo_total
+			dataType: double
+			lineageTag: 50feff9a-e3c3-456b-ac07-05f4bd175d98
+			summarizeBy: sum
+			sourceColumn: custo_total
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column Data
+			dataType: dateTime
+			formatString: Long Date
+			lineageTag: dcbe5bbe-92ee-4aa5-a1b7-658c688890fb
+			summarizeBy: none
+			sourceColumn: Data
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation UnderlyingDateTimeDataType = Date
+
+		column 'Valor Total' = fato_vendas[quantidade] * fato_vendas[valor_unitario]
+			lineageTag: 0115c489-4906-41a7-81e4-96d9be9da3f0
+			summarizeBy: sum
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		column 'Custo Unitário' =
+				
+				// LOOKUPVALUE(
+				//     dim_produto[preco_custo],
+				//     dim_produto[sk_produto],
+				//     fato_vendas[sk_produto]
+				// )
+				RELATED(dim_produto[preco_custo])
+			lineageTag: 142c91cc-461e-445c-bce9-880d0a400f69
+			summarizeBy: sum
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		partition fato_vendas = m
+			mode: import
+			source =
+					let
+					    Fonte = Parquet.Document(File.Contents(Caminho & "\fato_vendas.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null]),
+					  #"Data Inserida" = Table.AddColumn(Fonte, "Data", each Date.From(Text.From([sk_data], "pt-BR")), type date)
+					in
+					    #"Data Inserida"
+
+		annotation PBI_ResultType = Table
+

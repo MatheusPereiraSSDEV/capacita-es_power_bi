@@ -1,0 +1,448 @@
+createOrReplace
+
+	table Medidas
+		lineageTag: 599bca91-d69c-434b-931b-ef4992db3213
+
+		measure 'Quantidade Vendas' =
+				
+				COUNTROWS(fato_vendas)
+			formatString: #,0
+			displayFolder: Agregações
+			lineageTag: 8588867b-e59a-433b-be2a-0242e6021a0c
+
+		measure 'Ticket Médio' = DIVIDE([Valor Liquido], [Quantidade Vendas])
+			displayFolder: Cálculos
+			lineageTag: 1aace4c7-40a7-41d9-80b2-154e958ac793
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Valor Liquido' = SUM(fato_vendas[valor_liquido])
+			displayFolder: Agregações
+			lineageTag: b0a0fe01-7217-49e8-a80c-f2dbe38e832e
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Valor Total Medida' =
+				
+				SUMX(
+				    fato_vendas,
+				    fato_vendas[quantidade] * fato_vendas[valor_unitario]
+				)
+			displayFolder: Agregações
+			lineageTag: 2c22a3f6-e408-421e-90d0-08a397c453aa
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Valor Liquido Mes Anterior' =
+				
+				CALCULATE(
+				    [Valor Liquido],
+				    PREVIOUSMONTH(dim_calendario[data])
+				)
+				// VAR dataRef = MAX(dim_calendario[data])
+				
+				// RETURN
+				// CALCULATE(
+				//     [Valor Liquido],
+				//     FILTER(
+				//         ALL(dim_calendario),
+				//         dim_calendario[data] > EOMONTH(dataRef, -2) &&
+				//         dim_calendario[data] <= EOMONTH(dataRef, -1)
+				//     )
+				// )
+			displayFolder: Cálculos
+			lineageTag: 66c8f0e7-6711-46bc-8f32-2bcd955996c6
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Valor Liquido Ano Anterior' =
+				
+				CALCULATE(
+				    [Valor Liquido],
+				    PREVIOUSYEAR(dim_calendario[data])
+				)
+			displayFolder: Cálculos
+			lineageTag: 28f4b1c1-fd4f-4d73-bfab-ba66eacf34df
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Valor Liquido Período Anterior' =
+				
+				CALCULATE(
+				    [Valor Liquido],
+				    SAMEPERIODLASTYEAR(dim_calendario[data])
+				)
+			displayFolder: Cálculos
+			lineageTag: 8f3167f3-4140-4dcf-93cc-b6beb24ef053
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Repres. Valor Liquido' =
+				
+				DIVIDE(
+				    [Valor Liquido],
+				    [Format. Periodo Anterior],
+				    BLANK()
+				)
+			formatString: 0.00%;-0.00%;0.00%
+			displayFolder: Cálculos
+			lineageTag: c261723a-0d28-415c-889e-ce3d30e7ba2e
+
+		measure 'Condicional Valor Liquido' =
+				
+				IF(
+				    [Valor Liquido] > [Format. Periodo Anterior],
+				    1,
+				    0
+				)
+			formatString: 0
+			lineageTag: 5cf7cf29-0c9b-476e-be2d-e5e1c764f92e
+
+		measure 'Desc. Quantidade Vendas' = "Quantidade Vendas" & IF(SELECTEDVALUE('Parâmetro_Medidas'[Parâmetro_Medidas Pedido]) = 0, " 🟢")
+			lineageTag: b05209f0-ae61-47e2-950e-c731ef743bd8
+
+		measure 'Format. Periodo Anterior' =
+				
+				IF(
+				    ISINSCOPE(dim_calendario[mes_nome]),
+				    [Valor Liquido Mes Anterior],
+				    [Valor Liquido Ano Anterior]
+				)
+			lineageTag: b6f574e2-694f-4af9-8bfc-08b25720eb4a
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Format. Quantidade Vendas' = IF(SELECTEDVALUE('Parâmetro_Medidas'[Parâmetro_Medidas Pedido]) = 0, "1")
+			lineageTag: e63eac1b-02a6-420f-ac12-26617f5a1156
+
+		measure 'Proj. Venda' = [Valor Liquido] * (1 + 'Parâmetro_Numerico'[Valor Parâmetro_Numerico] / 100)
+			lineageTag: f118d499-d94c-49fc-86c8-c2f2b4d2ba57
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure Teste = ```
+				
+				VAR periodo = DATESINPERIOD(dim_calendario[data], MAX(dim_calendario[data]), -3, MONTH)
+				
+				VAR mesComVenda = 
+				CALCULATE(
+				    COUNTROWS(
+				        FILTER(
+				            VALUES(dim_calendario[ano_mes]),
+				            [Valor Liquido] > 0
+				        )
+				    ),
+				    periodo
+				)
+				
+				RETURN
+				mesComVenda
+				```
+			formatString: 0
+			lineageTag: 5e76a6bc-1984-424e-8d6b-c46425c40e9f
+
+		measure 'Custo Total' =
+				
+				SUMX(
+				    fato_vendas,
+				    fato_vendas[quantidade] * RELATED(dim_produto[preco_custo])
+				)
+			displayFolder: Cálculos
+			lineageTag: 7747daaa-f2ab-4900-9910-eaa80c06e5d8
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure Margem = [Valor Liquido] - [Custo Total]
+			displayFolder: Cálculos
+			lineageTag: 8342c546-d8af-4edd-9c37-0048a705e5da
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Margem %' =
+				
+				// FORMAT(
+				    DIVIDE([Margem], [Valor Liquido], 0)--,
+				//     "#,##0.00%"
+				// )
+			formatString: 0.00%;-0.00%;0.00%
+			displayFolder: Cálculos
+			lineageTag: e127ad27-7f5a-4442-aae9-9295452ebe23
+
+		measure 'Valor Desconto' = SUM(fato_vendas[valor_desconto])
+			displayFolder: Cálculos
+			lineageTag: f5846fa9-d568-4ed2-90eb-b85dcaa15267
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Valor Bruto' = SUM(fato_vendas[valor_bruto])
+			displayFolder: Agregações
+			lineageTag: 2c5babe1-4ed9-4994-adca-c42cffda55d5
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Desconto %' =
+				
+				DIVIDE(
+				    [Valor Desconto],
+				    [Valor Bruto],
+				    0
+				)
+			formatString: 0.00%;-0.00%;0.00%
+			displayFolder: Cálculos
+			lineageTag: 91d15c85-1c9b-4fc4-820a-e37df6b32e4a
+
+		measure 'Clientes Compradores' = DISTINCTCOUNT(fato_vendas[sk_cliente])
+			formatString: 0
+			displayFolder: Agregações
+			lineageTag: 9473a1a2-b013-408a-a76e-495e0880ee8a
+
+		measure 'Clientes Cadastrados' = COUNTROWS(dim_cliente)
+			formatString: 0
+			displayFolder: Agregações
+			lineageTag: 0e7c9849-1f61-408c-9826-a2eb97af7bfb
+
+		measure 'Captação Clientes' =
+				
+				DIVIDE(
+				    [Clientes Compradores],
+				    [Clientes Cadastrados],
+				    0
+				)
+			formatString: 0.00%;-0.00%;0.00%
+			displayFolder: Cálculos
+			lineageTag: 23b957a8-37a9-40f1-b3c5-b9fbd5890ae8
+
+		measure 'Produtos Vendidos' = DISTINCTCOUNT(fato_vendas[sk_produto])
+			formatString: 0
+			displayFolder: Agregações
+			lineageTag: 61c28d7e-cb7f-4636-8e3e-09c60845052c
+
+		measure Meta = SUM(fato_metas[meta_faturamento])
+			displayFolder: Agregações
+			lineageTag: dfe6a275-6ee8-4f94-8285-d7b13a21283f
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Atingimento %' =
+				
+				DIVIDE(
+				    [Valor Liquido],
+				    [Meta],
+				    0
+				)
+			formatString: 0.00%;-0.00%;0.00%
+			displayFolder: Cálculos
+			lineageTag: 21eb8371-169c-4b65-87f0-54a74a9ab8fa
+
+		measure 'Status Meta' =
+				
+				SWITCH(
+				    TRUE(),
+				    ISBLANK([Meta]), "Sem Meta",
+				    [Atingimento %] >= 1, "Meta Atingida",
+				    [Atingimento %] >= 0.9, "Próximo",
+				    "Abaixo da Meta"
+				)
+			lineageTag: cb8d1ebc-9a30-4110-b8b7-b881b8f13b9d
+
+		measure 'Venda Loja Fisica' =
+				
+				CALCULATE(
+				    [Valor Liquido],
+				    dim_canal[canal] = "Loja Física"
+				)
+			displayFolder: Cálculos
+			lineageTag: 16e81f10-dc3a-4c18-97fe-50fc4ef5c145
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Venda Loja Física (KEEPFILTERS)' =
+				
+				CALCULATE(
+				    [Valor Liquido],
+				    KEEPFILTERS(dim_canal[canal] = "Loja Física")
+				)
+			displayFolder: Cálculos
+			lineageTag: a595a62a-fe6b-448c-84cb-2fea5dc4760e
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Venda Loja Física (FILTER)' =
+				
+				CALCULATE(
+				    [Valor Liquido],
+				    FILTER(
+				        dim_canal,
+				        dim_canal[canal] = "Loja Física"
+				    )
+				)
+			displayFolder: Cálculos
+			lineageTag: 12c0127c-0a52-42ad-a4e8-a3016795c6a3
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure '% Participação no Total' =
+				
+				DIVIDE(
+				    [Valor Liquido],
+				    CALCULATE(
+				        [Valor Liquido],
+				        ALL(dim_produto)
+				    )
+				)
+			formatString: 0.00%;-0.00%;0.00%
+			displayFolder: Cálculos
+			lineageTag: bf62a7b4-4db6-4748-9c46-6aee990e5a1b
+
+		measure '% Participação na Seleção' =
+				
+				DIVIDE(
+				    [Valor Liquido],
+				    CALCULATE(
+				        [Valor Liquido],
+				        ALLSELECTED(dim_produto)
+				    )
+				)
+			formatString: 0.00%;-0.00%;0.00%
+			displayFolder: Cálculos
+			lineageTag: 4e210313-e376-48ba-86c5-44caf221dc9e
+
+		measure '% na Categoria' =
+				
+				DIVIDE(
+				    [Valor Liquido],
+				    CALCULATE(
+				        [Valor Liquido],
+				        REMOVEFILTERS(dim_produto[descricao])
+				    )
+				)
+			formatString: 0.00%;-0.00%;0.00%
+			displayFolder: Cálculos
+			lineageTag: 6de03e77-174f-4459-a6bc-bf5524bedfa3
+
+		measure 'Produtos Venda Acima 20k' =
+				
+				COUNTROWS(
+				    FILTER(
+				        VALUES(fato_vendas[sk_produto]),
+				        [Valor Liquido] >= 20000
+				    )
+				)
+			formatString: 0
+			displayFolder: Cálculos
+			lineageTag: aded562e-b27d-42ea-ba33-c7b7fcd45f4c
+
+		/// Medida destinada ao cálculo relacionado ao YTD do ano vigente
+		measure 'Valor Liquido YTD' =
+				/*Medida destinada ao cálculo relacionado ao YTD do ano vigente*/
+				TOTALYTD([Valor Liquido], dim_calendario[data])
+			displayFolder: Cálculos
+			lineageTag: 4ad49f41-1561-446b-8730-3a874214ed94
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Valor YTD Ano Anterior' =
+				
+				CALCULATE(
+				    [Valor Liquido YTD],
+				    SAMEPERIODLASTYEAR(dim_calendario[data])
+				)
+			displayFolder: Cálculos
+			lineageTag: fe601703-fc24-4a3b-a7a8-78f332bd21b4
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Valor 12 meses' =
+				
+				CALCULATE(
+				    [Valor Liquido],
+				    DATESINPERIOD(
+				        dim_calendario[data],
+				        MAX(dim_calendario[data]),
+				        -12,
+				        MONTH
+				    )
+				)
+			displayFolder: Cálculos
+			lineageTag: cd0be79a-62e7-4163-9bc6-8d7c479d05b7
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Média móvel 3 meses' = ```
+				
+				VAR periodo = DATESINPERIOD(dim_calendario[data], MAX(dim_calendario[data]), -3, MONTH)
+				
+				VAR mesComVenda = 
+				CALCULATE(
+				    COUNTROWS(
+				        FILTER(
+				            VALUES(dim_calendario[ano_mes]),
+				            [Valor Liquido] > 0
+				        )
+				    ),
+				    periodo
+				)
+				
+				RETURN
+				DIVIDE(
+				    CALCULATE(
+				        [Valor Liquido],
+				        periodo
+				    ),
+				    mesComVenda
+				)
+				
+				// DIVIDE(
+				//     CALCULATE(
+				//         [Valor Liquido],
+				//         DATESINPERIOD(
+				//             dim_calendario[data],
+				//             MAX(dim_calendario[data]),
+				//             -3,
+				//             MONTH
+				//         )
+				//     ),
+				//     3
+				// )
+				```
+			displayFolder: Cálculos
+			lineageTag: 24c0ed9e-ede0-4c3d-9f22-4a0d3e71d56f
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Ranking Produto' =
+				
+				RANKX(
+				    ALLSELECTED(dim_produto),
+				    [Valor Liquido], ,
+				    DESC,
+				    Dense
+				)
+			formatString: 0
+			lineageTag: a6fe41ad-f35f-4648-b046-f5f58401bdbd
+
+		measure 'Top 5 Produtos' =
+				
+				CALCULATE(
+				    [Valor Liquido],
+				    FILTER(
+				        VALUES(dim_produto[descricao]),
+				        [Ranking Produto] < 5
+				    ),
+				    ALLSELECTED(dim_produto[descricao])
+				)
+			lineageTag: 4867748a-9037-4a56-a3cc-cfcdaf113347
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		partition Medidas = m
+			mode: import
+			source =
+					let
+					  Origem = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+					    #"Colunas Removidas" = Table.RemoveColumns(Origem,{"Coluna 1"})
+					in
+					  #"Colunas Removidas"
+
+		annotation PBI_ResultType = Table
+

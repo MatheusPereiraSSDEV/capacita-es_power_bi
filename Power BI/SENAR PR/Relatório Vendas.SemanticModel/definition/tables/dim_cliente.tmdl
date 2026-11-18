@@ -1,0 +1,41 @@
+table dim_cliente
+	lineageTag: 2841ea22-03c8-4cb3-b9f5-2fb68bd248f8
+
+	column sk_cliente
+		dataType: int64
+		formatString: 0
+		lineageTag: 77dcbf97-a310-4df8-9c88-4a4e44419a1b
+		summarizeBy: none
+		sourceColumn: sk_cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column cidade
+		dataType: string
+		lineageTag: 4437c865-55cc-477f-9750-eab30958449f
+		summarizeBy: none
+		sourceColumn: cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column segmento
+		dataType: string
+		lineageTag: 63cb5104-7c0c-46e1-b71e-ffca651a535c
+		summarizeBy: none
+		sourceColumn: segmento
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_cliente = m
+		mode: import
+		source =
+				let
+				    Fonte = Parquet.Document(File.Contents(Caminho & "\dim_cliente.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null]),
+				    #"Columns removed by Measure Killer"= Table.SelectColumns(Fonte,{"sk_cliente", "cidade", "segmento"})
+				in
+				    #"Columns removed by Measure Killer"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

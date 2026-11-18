@@ -1,0 +1,6 @@
+EVALUATE
+	TOPN(
+		5,
+		ALLSELECTED(dim_produto[descricao]),
+		[Valor Liquido]
+	)

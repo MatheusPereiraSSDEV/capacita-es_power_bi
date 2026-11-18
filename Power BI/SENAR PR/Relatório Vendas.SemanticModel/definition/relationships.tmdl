@@ -1,0 +1,28 @@
+relationship bfcc8e08-b141-b81d-cf9f-f94b2780f916
+	fromColumn: fato_metas.Data
+	toColumn: dim_calendario.data
+
+relationship 851d34c1-f238-7d48-623b-208b08b188d6
+	fromColumn: fato_vendas.sk_canal
+	toColumn: dim_canal.sk_canal
+
+relationship e21fd032-4fbe-2cdf-b749-a76526d95f1c
+	fromColumn: fato_metas.sk_canal
+	toColumn: dim_canal.sk_canal
+
+relationship d54c704f-240a-3c48-c7ed-f504b4157b8b
+	fromColumn: fato_vendas.sk_cliente
+	toColumn: dim_cliente.sk_cliente
+
+relationship 130bcee2-af36-a0c1-a2a1-39bd94315140
+	fromColumn: fato_vendas.sk_produto
+	toColumn: dim_produto.sk_produto
+
+relationship 7c4b4377-3cd6-7fe3-52fa-94fa3621d935
+	fromColumn: fato_vendas.Data
+	toColumn: dim_calendario.data
+
+relationship dead19bf-5ab5-13d7-292f-a2b7e1b05547
+	fromColumn: dim_cliente.cidade
+	toColumn: RLS.Cidade
+

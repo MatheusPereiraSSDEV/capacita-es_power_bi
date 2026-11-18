@@ -1,0 +1,56 @@
+table dim_calendario
+	lineageTag: 48d1c014-c0d7-4245-a4a5-8ab881db09d1
+
+	column data
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d19dbe72-b3cb-49df-b1f6-7a2f6f0f9795
+		summarizeBy: none
+		sourceColumn: data
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ano
+		dataType: int64
+		formatString: 0
+		lineageTag: caa33883-ce8a-45a9-a95d-b009fb9389e4
+		summarizeBy: none
+		sourceColumn: ano
+
+		annotation SummarizationSetBy = User
+
+	column mes
+		dataType: int64
+		formatString: 0
+		lineageTag: 1ab96eff-078a-42b0-bcb0-35d6c2f32118
+		summarizeBy: sum
+		sourceColumn: mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes_nome
+		dataType: string
+		lineageTag: 654c7ff9-bd21-4c6f-97f0-8c99f221d864
+		summarizeBy: none
+		sourceColumn: mes_nome
+		sortByColumn: mes
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_calendario = m
+		mode: import
+		source =
+				let
+				    Fonte = Parquet.Document(File.Contents(Caminho & "\dim_calendario.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null]),
+				    #"Columns removed by Measure Killer"= Table.SelectColumns(Fonte,{"data", "ano", "mes", "mes_nome"})
+				in
+				    #"Columns removed by Measure Killer"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

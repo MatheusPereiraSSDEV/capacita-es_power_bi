@@ -1,0 +1,4 @@
+EVALUATE
+	ROW(
+	"Valor_Total_Medida", 'Medidas'[Valor Total Medida]
+)

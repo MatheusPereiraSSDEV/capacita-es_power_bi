@@ -1,0 +1,7 @@
+role Vendedor
+	modelPermission: read
+
+	tablePermission RLS = [Vendedor] = USERPRINCIPALNAME()
+
+	annotation PBI_Id = 12f0162431dd4bf888e5b202b802ec07
+

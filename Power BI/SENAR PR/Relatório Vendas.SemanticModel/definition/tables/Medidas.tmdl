@@ -1,0 +1,179 @@
+table Medidas
+	lineageTag: 599bca91-d69c-434b-931b-ef4992db3213
+
+	measure 'Quantidade Vendas' =
+			
+			COUNTROWS(fato_vendas)
+		formatString: #,0
+		displayFolder: Agregações
+		lineageTag: 8588867b-e59a-433b-be2a-0242e6021a0c
+
+	measure 'Ticket Médio' = DIVIDE([Valor Liquido], [Quantidade Vendas])
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Cálculos
+		lineageTag: 1aace4c7-40a7-41d9-80b2-154e958ac793
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Valor Liquido' = SUM(fato_vendas[valor_liquido])
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Agregações
+		lineageTag: b0a0fe01-7217-49e8-a80c-f2dbe38e832e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'Valor Total Medida' =
+			
+			SUMX(
+			    fato_vendas,
+			    fato_vendas[quantidade] * fato_vendas[valor_unitario]
+			)
+		displayFolder: Agregações
+		lineageTag: 2c22a3f6-e408-421e-90d0-08a397c453aa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Teste =
+			
+			USERPRINCIPALNAME()
+		lineageTag: 5e76a6bc-1984-424e-8d6b-c46425c40e9f
+
+	measure 'Custo Total' =
+			
+			SUMX(
+			    fato_vendas,
+			    fato_vendas[quantidade] * RELATED(dim_produto[preco_custo])
+			)
+		displayFolder: Cálculos
+		lineageTag: 7747daaa-f2ab-4900-9910-eaa80c06e5d8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Margem = [Valor Liquido] - [Custo Total]
+		displayFolder: Cálculos
+		lineageTag: 8342c546-d8af-4edd-9c37-0048a705e5da
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Margem %' =
+			
+			// FORMAT(
+			    DIVIDE([Margem], [Valor Liquido], 0)--,
+			//     "#,##0.00%"
+			// )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Cálculos
+		lineageTag: e127ad27-7f5a-4442-aae9-9295452ebe23
+
+	measure 'Clientes Compradores' = DISTINCTCOUNT(fato_vendas[sk_cliente])
+		formatString: 0
+		displayFolder: Agregações
+		lineageTag: 9473a1a2-b013-408a-a76e-495e0880ee8a
+
+	measure Meta = SUM(fato_metas[meta_faturamento])
+		displayFolder: Agregações
+		lineageTag: dfe6a275-6ee8-4f94-8285-d7b13a21283f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Atingimento %' =
+			
+			DIVIDE(
+			    [Valor Liquido],
+			    [Meta],
+			    0
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Cálculos
+		lineageTag: 21eb8371-169c-4b65-87f0-54a74a9ab8fa
+
+	measure 'visual HTML' =
+			
+			VAR _Valor = [Valor Liquido]
+			VAR _Abs   = ABS ( _Valor )
+			VAR _Texto =
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _Valor ), "–",
+			        _Abs >= 1000000000, FORMAT ( _Valor / 1000000000, "R$ #,##0.0" ) & " bi",
+			        _Abs >= 1000000,    FORMAT ( _Valor / 1000000,    "R$ #,##0.0" ) & " mi",
+			        _Abs >= 1000,       FORMAT ( _Valor / 1000,       "R$ #,##0.0" ) & " mil",
+			        FORMAT ( _Valor, "R$ #,##0.00" )
+			    )
+			VAR _ValorCompleto = FORMAT ( _Valor, "R$ #,##0.00" )
+			VAR _Cor = IF ( _Valor < 0, "#D64545", "#1F3B57" )
+			RETURN
+			"<div style='font-family:Segoe UI, sans-serif; background:#FFFFFF; border-radius:12px;
+			             box-shadow:0 2px 8px rgba(0,0,0,0.12); padding:16px 20px;
+			             border-left:6px solid " & _Cor & "; height:100%; box-sizing:border-box;'>
+			    <div style='font-size:13px; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px;'>
+			        Valor Líquido
+			    </div>
+			    <div style='font-size:32px; font-weight:700; color:" & _Cor & "; margin-top:6px;'
+			         title='" & _ValorCompleto & "'>
+			        " & _Texto & "
+			    </div>
+			</div>"
+		lineageTag: 3075f64a-c279-4de9-af96-946ad3ee689d
+
+	measure 'Tabela Canal HTML' =
+			
+			VAR _Tabela =
+			    FILTER (
+			        ADDCOLUMNS (
+			            VALUES ( dim_canal[canal] ),
+			            "@Valor", [Valor Liquido]
+			        ),
+			        NOT ISBLANK ( [@Valor] )
+			    )
+			VAR _Total = [Valor Liquido]
+			VAR _Linhas =
+			    CONCATENATEX (
+			        _Tabela,
+			        "<tr>
+			            <td style='padding:8px 12px; border-bottom:1px solid #E5E7EB; color:#374151;'>"
+			                & COALESCE ( dim_canal[canal], "(Sem canal)" ) &
+			            "</td>
+			            <td style='padding:8px 12px; border-bottom:1px solid #E5E7EB; text-align:right;
+			                       font-weight:600; color:" & IF ( [@Valor] < 0, "#D64545", "#1F3B57" ) & ";'>"
+			                & FORMAT ( [@Valor], "R$ #,##0.00" ) &
+			            "</td>
+			        </tr>",
+			        "",
+			        [@Valor], DESC
+			    )
+			RETURN
+			"<div style='font-family:Segoe UI, sans-serif; background:#FFFFFF; border-radius:12px;
+			             box-shadow:0 2px 8px rgba(0,0,0,0.12); padding:12px; box-sizing:border-box;'>
+			    <table style='width:100%; border-collapse:collapse; font-size:13px;'>
+			        <thead>
+			            <tr style='background:#1F3B57; color:#FFFFFF;'>
+			                <th style='padding:10px 12px; text-align:left; border-radius:8px 0 0 0;'>Canal</th>
+			                <th style='padding:10px 12px; text-align:right; border-radius:0 8px 0 0;'>Valor Líquido</th>
+			            </tr>
+			        </thead>
+			        <tbody>" & _Linhas & "</tbody>
+			        <tfoot>
+			            <tr style='background:#F3F4F6; font-weight:700;'>
+			                <td style='padding:10px 12px; color:#1F3B57;'>Total</td>
+			                <td style='padding:10px 12px; text-align:right; color:"
+			                    & IF ( _Total < 0, "#D64545", "#1F3B57" ) & ";'>"
+			                    & FORMAT ( _Total, "R$ #,##0.00" ) &
+			                "</td>
+			            </tr>
+			        </tfoot>
+			    </table>
+			</div>"
+		lineageTag: 0a88f20e-60ee-4ca0-8da7-80bfcdbb74e1
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				  Origem = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Colunas Removidas" = Table.RemoveColumns(Origem,{"Coluna 1"})
+				in
+				  #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+

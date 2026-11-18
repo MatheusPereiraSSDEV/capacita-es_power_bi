@@ -1,0 +1,7 @@
+role Curitiba
+	modelPermission: read
+
+	tablePermission dim_cliente = [cidade] == "Curitiba"
+
+	annotation PBI_Id = 61c1014e74fc44178d65bc875af39cb1
+

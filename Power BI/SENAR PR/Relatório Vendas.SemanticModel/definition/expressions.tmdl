@@ -1,0 +1,23 @@
+expression Caminho = "C:\Users\matheus.pereira\Documents\Treinamentos\capacita-es_power_bi\Dados" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = type text]
+	lineageTag: fdeddb4c-c843-41e1-89a2-67f84c3dc62d
+
+	annotation PBI_ResultType = Text
+
+expression RangeStart =
+		let
+		    Fonte = #datetime(2026, 1, 1, 0, 0, 0) meta [IsParameterQuery = true, IsParameterQueryRequired = false, Type = type datetime]
+		in
+		    Fonte
+	lineageTag: cab9d3ca-91e6-4d61-9cd3-d1a06273e3be
+
+	annotation PBI_ResultType = DateTime
+
+expression RangeEnd =
+		let
+		    Fonte = #datetime(2026, 1, 31, 0, 0, 0) meta [IsParameterQuery = true, IsParameterQueryRequired = false, Type = type datetime]
+		in
+		    Fonte
+	lineageTag: e71a1aa8-1d6c-4f7e-8300-0f1c3fd22904
+
+	annotation PBI_ResultType = DateTime
+

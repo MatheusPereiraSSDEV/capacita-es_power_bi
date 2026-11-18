@@ -1,0 +1,29 @@
+table RLS
+	lineageTag: 356aad9c-9d51-4134-bb89-c49a4d4c9b2b
+
+	column Cidade
+		dataType: string
+		lineageTag: 68fa48ee-68ba-4bab-91d7-16f34fe2148f
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendedor
+		dataType: string
+		lineageTag: 821d3f02-dc7d-4487-86ac-effdd758b078
+		summarizeBy: none
+		sourceColumn: Vendedor
+
+		annotation SummarizationSetBy = Automatic
+
+	partition RLS = m
+		mode: import
+		source =
+				let
+				  Origem = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("HcsxCoAwDADAv2QueYPgF9yKQ2qjBlpSkhS/r7jf5QybNq4KCTrFzdNxsLEYLa5nPGTss+GhHYvBnjKs0ySk0DdsslTBQh7qi4sHdzqJB6pdv99f", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Cidade = _t, Vendedor = _t])
+				in
+				  Origem
+
+	annotation PBI_ResultType = Table
+

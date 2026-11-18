@@ -1,0 +1,47 @@
+table fato_metas
+	lineageTag: d8135154-5a54-4770-aff5-09d6c1988410
+
+	column sk_canal
+		dataType: int64
+		formatString: 0
+		lineageTag: e86f59c1-672a-4fb3-9c69-58b0768227ac
+		summarizeBy: none
+		sourceColumn: sk_canal
+
+		annotation SummarizationSetBy = Automatic
+
+	column meta_faturamento
+		dataType: double
+		lineageTag: 847bd20e-e157-486c-86cc-3989ffad1849
+		summarizeBy: sum
+		sourceColumn: meta_faturamento
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Data
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1935f293-9348-49e6-b0f7-b19b64447ec4
+		summarizeBy: none
+		sourceColumn: Data
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition fato_metas = m
+		mode: import
+		source =
+				let
+				    Fonte = Parquet.Document(File.Contents(Caminho & "\fato_metas.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null]),
+				  #"Data Inserida" = Table.AddColumn(Fonte, "Data", each Date.From(Text.From([sk_data], "pt-BR")), type date),
+				    #"Columns removed by Measure Killer"= Table.SelectColumns(#"Data Inserida",{"sk_canal","meta_faturamento","Data"})
+				in
+				    #"Columns removed by Measure Killer"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+
